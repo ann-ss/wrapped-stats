@@ -18,11 +18,11 @@ export default function NavigationControls({
 }: NavigationControlsProps) {
   return (
     <>
-      {/* Previous button */}
+      {/* Previous button - hidden on mobile */}
       {hasPrevious && (
         <motion.button
           onClick={onPrevious}
-          className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-4 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-2xl hover:shadow-pink-500/50"
+          className="hidden md:block fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-4 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-2xl hover:shadow-pink-500/50"
           whileHover={{ scale: 1.1, rotate: -5 }}
           whileTap={{ scale: 0.9 }}
           initial={{ opacity: 0, x: -50 }}
@@ -33,11 +33,11 @@ export default function NavigationControls({
         </motion.button>
       )}
 
-      {/* Next button */}
+      {/* Next button - hidden on mobile */}
       {hasNext && (
         <motion.button
           onClick={onNext}
-          className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-4 rounded-full bg-gradient-to-br from-cyan-600 to-purple-600 text-white shadow-2xl hover:shadow-cyan-500/50"
+          className="hidden md:block fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-4 rounded-full bg-gradient-to-br from-cyan-600 to-purple-600 text-white shadow-2xl hover:shadow-cyan-500/50"
           whileHover={{ scale: 1.1, rotate: 5 }}
           whileTap={{ scale: 0.9 }}
           initial={{ opacity: 0, x: 50 }}

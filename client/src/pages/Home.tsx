@@ -82,6 +82,7 @@ export default function Home() {
     }
   }, [currentTheme]);
 
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight" && currentSlide < totalSlides - 1) {
@@ -93,6 +94,44 @@ export default function Home() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentSlide, totalSlides]);
+
+  // Touch/swipe navigation
+  useEffect(() => {
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX = e.changedTouches[0].screenX;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    };
+
+    const handleSwipe = () => {
+      const swipeThreshold = 50; // Minimum distance for swipe
+      const diff = touchStartX - touchEndX;
+
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0 && currentSlide < totalSlides - 1) {
+          // Swipe left - go to next
+          handleNext();
+        } else if (diff < 0 && currentSlide > 0) {
+          // Swipe right - go to previous
+          handlePrevious();
+        }
+      }
+    };
+
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
   }, [currentSlide, totalSlides]);
 
   const handleNext = () => {
@@ -352,8 +391,21 @@ export default function Home() {
     return null;
   };
 
+  // Handle tap zones (left/right sides of screen)
+  const handleTapZone = (e: React.MouseEvent<HTMLDivElement>) => {
+    const screenWidth = window.innerWidth;
+    const clickX = e.clientX;
+    const tapZoneWidth = screenWidth * 0.3; // 30% of screen on each side
+
+    if (clickX < tapZoneWidth && currentSlide > 0) {
+      handlePrevious();
+    } else if (clickX > screenWidth - tapZoneWidth && currentSlide < totalSlides - 1) {
+      handleNext();
+    }
+  };
+
   return (
-    <div className="relative">
+    <div className="relative" onClick={handleTapZone}>
       <ProgressIndicator current={currentSlide} total={totalSlides} onNavigate={handleNavigate} />
 
       <NavigationControls

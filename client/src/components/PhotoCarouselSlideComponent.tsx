@@ -65,7 +65,14 @@ export default function PhotoCarouselSlideComponent({
         {photos.length > 0 ? (
           <div className="relative">
             {/* Photo Display */}
-            <div className="relative aspect-video rounded-3xl overflow-hidden">
+            <div 
+              className="relative rounded-3xl overflow-hidden flex items-center justify-center"
+              style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                minHeight: '400px',
+                maxHeight: '70vh'
+              }}
+            >
               <AnimatePresence mode="wait">
                 <motion.img
                   key={currentPhotoIndex}
@@ -75,7 +82,7 @@ export default function PhotoCarouselSlideComponent({
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
-                  className="w-full h-full object-cover"
+                  className="max-w-full max-h-[70vh] object-contain"
                 />
               </AnimatePresence>
 

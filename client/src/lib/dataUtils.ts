@@ -1,13 +1,64 @@
-import { Music, TrendingUp, Clock, Award, Sparkles, Heart } from "lucide-react";
+import {
+  Music,
+  TrendingUp,
+  Clock,
+  Award,
+  Sparkles,
+  Heart,
+  Trophy,
+  Star,
+  Calendar,
+  Image as ImageIcon,
+} from "lucide-react";
 
-export interface SlideData {
+export interface StatSlide {
   type: "stat";
   title: string;
   value: string | number;
   subtitle?: string;
   icon: string;
-  backgroundIndex: number;
+  backgroundIndex?: number;
+  customPhoto?: string; // Photo ID from uploaded photos
 }
+
+export interface TopRankingItem {
+  rank: number;
+  title: string;
+  value: string | number;
+  subtitle?: string;
+}
+
+export interface TopRankingSlide {
+  type: "top-ranking";
+  title: string;
+  items: TopRankingItem[];
+  icon?: string;
+}
+
+export interface TimelineEvent {
+  date: string;
+  title: string;
+  description?: string;
+}
+
+export interface TimelineSlide {
+  type: "timeline";
+  title: string;
+  events: TimelineEvent[];
+}
+
+export interface PhotoCarouselSlide {
+  type: "photo-carousel";
+  title: string;
+  subtitle?: string;
+  photos: string[]; // Array of photo IDs
+}
+
+export type SlideData =
+  | StatSlide
+  | TopRankingSlide
+  | TimelineSlide
+  | PhotoCarouselSlide;
 
 export interface PresentationData {
   title: string;
@@ -24,6 +75,10 @@ export const getIconComponent = (iconName: string) => {
     trending: TrendingUp,
     heart: Heart,
     award: Award,
+    trophy: Trophy,
+    star: Star,
+    calendar: Calendar,
+    image: ImageIcon,
   };
 
   return iconMap[iconName] || Sparkles;

@@ -4,43 +4,109 @@
   "slides": [
     {
       "type": "stat",
-      "title": "Total Listening Time",
-      "value": "52,847",
-      "subtitle": "minutes of pure vibes",
-      "icon": "clock",
+      "title": "Total Steps",
+      "value": "3,456,789",
+      "subtitle": "steps walked this year",
+      "icon": "trending",
       "backgroundIndex": 0
     },
     {
       "type": "stat",
-      "title": "Top Genre",
-      "value": "Indie Pop",
-      "subtitle": "You're a trendsetter",
-      "icon": "music",
+      "title": "Calories Burned",
+      "value": "487,230",
+      "subtitle": "total calories",
+      "icon": "award",
       "backgroundIndex": 1
     },
     {
+      "type": "top-ranking",
+      "title": "Top 5 Workouts",
+      "icon": "trophy",
+      "items": [
+        {
+          "rank": 1,
+          "title": "Running",
+          "value": "127",
+          "subtitle": "sessions completed"
+        },
+        {
+          "rank": 2,
+          "title": "Cycling",
+          "value": "89",
+          "subtitle": "sessions completed"
+        },
+        {
+          "rank": 3,
+          "title": "Yoga",
+          "value": "76",
+          "subtitle": "sessions completed"
+        },
+        {
+          "rank": 4,
+          "title": "Swimming",
+          "value": "54",
+          "subtitle": "sessions completed"
+        },
+        {
+          "rank": 5,
+          "title": "Weight Training",
+          "value": "43",
+          "subtitle": "sessions completed"
+        }
+      ]
+    },
+    {
+      "type": "timeline",
+      "title": "Your Fitness Journey",
+      "events": [
+        {
+          "date": "Jan",
+          "title": "Started Running",
+          "description": "Completed your first 5K run"
+        },
+        {
+          "date": "Mar",
+          "title": "Gym Membership",
+          "description": "Joined the local fitness center"
+        },
+        {
+          "date": "Jun",
+          "title": "Half Marathon",
+          "description": "Finished your first half marathon in 2:15:30"
+        },
+        {
+          "date": "Sep",
+          "title": "Personal Best",
+          "description": "Hit a new deadlift PR of 225 lbs"
+        },
+        {
+          "date": "Dec",
+          "title": "Year Complete",
+          "description": "Achieved all your fitness goals for 2024"
+        }
+      ]
+    },
+    {
+      "type": "photo-carousel",
+      "title": "Your Best Moments",
+      "subtitle": "Memories from this year",
+      "photos": ["photo-123456", "photo-789012"]
+    },
+    {
       "type": "stat",
-      "title": "Songs Discovered",
-      "value": "1,247",
-      "subtitle": "New tracks added to your library",
-      "icon": "sparkles",
+      "title": "Workout Streak",
+      "value": "127",
+      "subtitle": "consecutive days",
+      "icon": "heart",
       "backgroundIndex": 2
     },
     {
       "type": "stat",
-      "title": "Listening Streak",
-      "value": "287",
-      "subtitle": "consecutive days",
-      "icon": "trending",
-      "backgroundIndex": 3
-    },
-    {
-      "type": "stat",
-      "title": "Most Played Song",
-      "value": "342",
-      "subtitle": "times you played 'Midnight Dreams'",
-      "icon": "heart",
-      "backgroundIndex": 1
+      "title": "Custom Photo Example",
+      "value": "Amazing!",
+      "subtitle": "Using your own photo as background",
+      "icon": "star",
+      "customPhoto": "photo-123456"
     }
   ]
 }

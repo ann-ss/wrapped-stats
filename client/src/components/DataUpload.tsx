@@ -95,20 +95,36 @@ export default function DataUpload({ onDataLoaded, onClose }: DataUploadProps) {
     }
 
     // Check slides array
-    if (data.slides.length === 0 || data.slides.length > 10) {
+    if (data.slides.length === 0 || data.slides.length > 20) {
       return false;
     }
 
     // Validate each slide
-    const validIcons = ["clock", "music", "sparkles", "trending", "heart", "award"];
+    const validIcons = ["clock", "music", "sparkles", "trending", "heart", "award", "trophy", "star", "calendar", "image"];
     
     for (const slide of data.slides) {
-      if (slide.type !== "stat") return false;
-      if (!slide.title || slide.value === undefined) return false;
-      if (!slide.icon || !validIcons.includes(slide.icon)) return false;
-      if (slide.backgroundIndex === undefined || 
-          slide.backgroundIndex < 0 || 
-          slide.backgroundIndex > 3) return false;
+      if (!slide.type) return false;
+      
+      // Validate based on slide type
+      if (slide.type === "stat") {
+        if (!slide.title || slide.value === undefined) return false;
+        if (!slide.icon || !validIcons.includes(slide.icon)) return false;
+        // backgroundIndex and customPhoto are optional
+      } else if (slide.type === "top-ranking") {
+        if (!slide.title || !Array.isArray(slide.items)) return false;
+        for (const item of slide.items) {
+          if (typeof item.rank !== "number" || !item.title || item.value === undefined) return false;
+        }
+      } else if (slide.type === "timeline") {
+        if (!slide.title || !Array.isArray(slide.events)) return false;
+        for (const event of slide.events) {
+          if (!event.date || !event.title) return false;
+        }
+      } else if (slide.type === "photo-carousel") {
+        if (!slide.title || !Array.isArray(slide.photos)) return false;
+      } else {
+        return false; // Unknown slide type
+      }
     }
 
     return true;

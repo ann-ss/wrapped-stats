@@ -1,28 +1,69 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Award, Sparkles, Upload } from "lucide-react";
+import { Award, Sparkles, Upload, ImageIcon } from "lucide-react";
 import { useState, useEffect, createElement } from "react";
 import ConfettiEffect from "@/components/ConfettiEffect";
 import DataUpload from "@/components/DataUpload";
 import NavigationControls from "@/components/NavigationControls";
+import PhotoUpload from "@/components/PhotoUpload";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import StatsCard from "@/components/StatsCard";
 import StatsSlide from "@/components/StatsSlide";
 import ThemeSelector from "@/components/ThemeSelector";
+import TopRankingSlide from "@/components/TopRankingSlide";
+import TimelineSlideComponent from "@/components/TimelineSlideComponent";
+import PhotoCarouselSlideComponent from "@/components/PhotoCarouselSlideComponent";
 import { Button } from "@/components/ui/button";
-import { 
-  defaultData, 
-  getIconComponent, 
+import {
+  defaultData,
+  getIconComponent,
   getBackgroundImage,
-  type PresentationData 
+  type PresentationData,
+  type StatSlide,
+  type TopRankingSlide as TopRankingSlideData,
+  type TimelineSlide,
+  type PhotoCarouselSlide,
 } from "@/lib/dataUtils";
 import { themes, getFontImports, type Theme } from "@/lib/themes";
+import {
+  loadPresentationData,
+  savePresentationData,
+  loadTheme,
+  saveTheme,
+  loadCustomThemes,
+  saveCustomThemes,
+  loadUploadedPhotos,
+  addUploadedPhoto,
+  removeUploadedPhoto,
+} from "@/lib/storage";
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [presentationData, setPresentationData] = useState<PresentationData>(defaultData);
   const [currentTheme, setCurrentTheme] = useState<Theme>(themes[0]);
+  const [customThemes, setCustomThemes] = useState<Theme[]>([]);
+  const [uploadedPhotos, setUploadedPhotos] = useState<Record<string, string>>({});
+
+  // Load data from local storage on mount
+  useEffect(() => {
+    const savedData = loadPresentationData();
+    if (savedData) {
+      setPresentationData(savedData);
+    }
+
+    const savedTheme = loadTheme();
+    if (savedTheme) {
+      setCurrentTheme(savedTheme);
+    }
+
+    const savedCustomThemes = loadCustomThemes();
+    setCustomThemes(savedCustomThemes);
+
+    const savedPhotos = loadUploadedPhotos();
+    setUploadedPhotos(savedPhotos);
+  }, []);
 
   // Total slides = intro + data slides + finale
   const totalSlides = presentationData.slides.length + 2;
@@ -76,7 +117,41 @@ export default function Home() {
 
   const handleDataLoaded = (data: PresentationData) => {
     setPresentationData(data);
-    setCurrentSlide(0); // Reset to intro slide
+    savePresentationData(data);
+    setCurrentSlide(0);
+  };
+
+  const handleThemeChange = (theme: Theme) => {
+    setCurrentTheme(theme);
+    saveTheme(theme);
+  };
+
+  const handleCustomThemeAdd = (theme: Theme) => {
+    const updatedThemes = [...customThemes.filter((t) => t.id !== theme.id), theme];
+    setCustomThemes(updatedThemes);
+    saveCustomThemes(updatedThemes);
+    setCurrentTheme(theme);
+    saveTheme(theme);
+  };
+
+  const handleCustomThemeDelete = (themeId: string) => {
+    const updatedThemes = customThemes.filter((t) => t.id !== themeId);
+    setCustomThemes(updatedThemes);
+    saveCustomThemes(updatedThemes);
+    if (currentTheme.id === themeId) {
+      setCurrentTheme(themes[0]);
+      saveTheme(themes[0]);
+    }
+  };
+
+  const handlePhotoAdd = (id: string, dataUrl: string) => {
+    addUploadedPhoto(id, dataUrl);
+    setUploadedPhotos(loadUploadedPhotos());
+  };
+
+  const handlePhotoDelete = (id: string) => {
+    removeUploadedPhoto(id);
+    setUploadedPhotos(loadUploadedPhotos());
   };
 
   const renderSlide = (index: number) => {
@@ -132,7 +207,10 @@ export default function Home() {
                 style={{
                   fontFamily: currentTheme.fonts.display,
                   background: `linear-gradient(to right, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})`,
-                  color: currentTheme.id === "minimal" || currentTheme.id === "brutalist" ? "#FFFFFF" : currentTheme.colors.text,
+                  color:
+                    currentTheme.id === "minimal" || currentTheme.id === "brutalist"
+                      ? "#FFFFFF"
+                      : currentTheme.colors.text,
                 }}
               >
                 Let's Go! ✨
@@ -208,37 +286,75 @@ export default function Home() {
       );
     }
 
-    // Stat slides
+    // Data slides
     const slideData = presentationData.slides[index - 1];
-    const IconComponent = getIconComponent(slideData.icon);
-    const backgroundImage = getBackgroundImage(slideData.backgroundIndex);
 
-    return (
-      <StatsSlide key={`stat-${index}`} backgroundImage={backgroundImage}>
-        <div className="flex items-center justify-center min-h-[80vh]">
-          <div className="max-w-2xl w-full">
-            <StatsCard
-              title={slideData.title}
-              value={slideData.value}
-              subtitle={slideData.subtitle}
-              icon={createElement(IconComponent, { className: "w-16 h-16" })}
-              backgroundImage={backgroundImage}
-              delay={0.2}
-              theme={currentTheme}
-            />
+    // Stat slide
+    if (slideData.type === "stat") {
+      const statSlide = slideData as StatSlide;
+      const IconComponent = getIconComponent(statSlide.icon);
+      const backgroundImage = statSlide.customPhoto
+        ? uploadedPhotos[statSlide.customPhoto]
+        : statSlide.backgroundIndex !== undefined
+        ? getBackgroundImage(statSlide.backgroundIndex)
+        : undefined;
+
+      return (
+        <StatsSlide key={`stat-${index}`} backgroundImage={backgroundImage}>
+          <div className="flex items-center justify-center min-h-[80vh]">
+            <div className="max-w-2xl w-full">
+              <StatsCard
+                title={statSlide.title}
+                value={statSlide.value}
+                subtitle={statSlide.subtitle}
+                icon={createElement(IconComponent, { className: "w-16 h-16" })}
+                backgroundImage={backgroundImage}
+                delay={0.2}
+                theme={currentTheme}
+              />
+            </div>
           </div>
-        </div>
-      </StatsSlide>
-    );
+        </StatsSlide>
+      );
+    }
+
+    // Top ranking slide
+    if (slideData.type === "top-ranking") {
+      return (
+        <StatsSlide key={`ranking-${index}`} backgroundGradient={currentTheme.gradients.intro}>
+          <TopRankingSlide data={slideData as TopRankingSlideData} theme={currentTheme} />
+        </StatsSlide>
+      );
+    }
+
+    // Timeline slide
+    if (slideData.type === "timeline") {
+      return (
+        <StatsSlide key={`timeline-${index}`} backgroundGradient={currentTheme.gradients.intro}>
+          <TimelineSlideComponent data={slideData as TimelineSlide} theme={currentTheme} />
+        </StatsSlide>
+      );
+    }
+
+    // Photo carousel slide
+    if (slideData.type === "photo-carousel") {
+      return (
+        <StatsSlide key={`carousel-${index}`} backgroundGradient={currentTheme.gradients.intro}>
+          <PhotoCarouselSlideComponent
+            data={slideData as PhotoCarouselSlide}
+            theme={currentTheme}
+            uploadedPhotos={uploadedPhotos}
+          />
+        </StatsSlide>
+      );
+    }
+
+    return null;
   };
 
   return (
     <div className="relative">
-      <ProgressIndicator
-        current={currentSlide}
-        total={totalSlides}
-        onNavigate={handleNavigate}
-      />
+      <ProgressIndicator current={currentSlide} total={totalSlides} onNavigate={handleNavigate} />
 
       <NavigationControls
         onPrevious={handlePrevious}
@@ -247,21 +363,34 @@ export default function Home() {
         hasNext={currentSlide < totalSlides - 1}
       />
 
-      <AnimatePresence mode="wait">
-        {renderSlide(currentSlide)}
-      </AnimatePresence>
+      <AnimatePresence mode="wait">{renderSlide(currentSlide)}</AnimatePresence>
 
       <ConfettiEffect trigger={showConfetti} />
 
       {/* Theme Selector */}
-      <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} />
+      <ThemeSelector
+        currentTheme={currentTheme}
+        customThemes={customThemes}
+        onThemeChange={handleThemeChange}
+        onCustomThemeAdd={handleCustomThemeAdd}
+        onCustomThemeDelete={handleCustomThemeDelete}
+      />
 
-      {/* Upload Modal */}
+      {/* Data Upload Modal */}
       <AnimatePresence>
         {showUpload && (
-          <DataUpload
-            onDataLoaded={handleDataLoaded}
-            onClose={() => setShowUpload(false)}
+          <DataUpload onDataLoaded={handleDataLoaded} onClose={() => setShowUpload(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Photo Upload Modal */}
+      <AnimatePresence>
+        {showPhotoUpload && (
+          <PhotoUpload
+            photos={uploadedPhotos}
+            onPhotoAdd={handlePhotoAdd}
+            onPhotoDelete={handlePhotoDelete}
+            onClose={() => setShowPhotoUpload(false)}
           />
         )}
       </AnimatePresence>
@@ -276,6 +405,18 @@ export default function Home() {
         title="Upload your data"
       >
         <Upload className="w-6 h-6" />
+      </motion.button>
+
+      {/* Floating Photo Button (bottom right, above upload) */}
+      <motion.button
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1.1 }}
+        onClick={() => setShowPhotoUpload(true)}
+        className="fixed bottom-24 right-8 z-40 p-4 rounded-full bg-gradient-to-br from-blue-600 to-cyan-600 text-white shadow-2xl hover:shadow-cyan-500/50 hover:scale-110 transition-all"
+        title="Manage photos"
+      >
+        <ImageIcon className="w-6 h-6" />
       </motion.button>
     </div>
   );

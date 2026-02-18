@@ -1,0 +1,46 @@
+{
+  "title": "Your Year in Stats",
+  "subtitle": "2024 Wrapped",
+  "slides": [
+    {
+      "type": "stat",
+      "title": "Total Listening Time",
+      "value": "52,847",
+      "subtitle": "minutes of pure vibes",
+      "icon": "clock",
+      "backgroundIndex": 0
+    },
+    {
+      "type": "stat",
+      "title": "Top Genre",
+      "value": "Indie Pop",
+      "subtitle": "You're a trendsetter",
+      "icon": "music",
+      "backgroundIndex": 1
+    },
+    {
+      "type": "stat",
+      "title": "Songs Discovered",
+      "value": "1,247",
+      "subtitle": "New tracks added to your library",
+      "icon": "sparkles",
+      "backgroundIndex": 2
+    },
+    {
+      "type": "stat",
+      "title": "Listening Streak",
+      "value": "287",
+      "subtitle": "consecutive days",
+      "icon": "trending",
+      "backgroundIndex": 3
+    },
+    {
+      "type": "stat",
+      "title": "Most Played Song",
+      "value": "342",
+      "subtitle": "times you played 'Midnight Dreams'",
+      "icon": "heart",
+      "backgroundIndex": 1
+    }
+  ]
+}

@@ -1,5 +1,3 @@
-/* Kinetic Maximalism: Full Spotify Wrapped-style stats presentation with playful animations and JSON upload */
-
 import { AnimatePresence, motion } from "framer-motion";
 import { Award, Sparkles, Upload } from "lucide-react";
 import { useState, useEffect, createElement } from "react";
@@ -9,6 +7,7 @@ import NavigationControls from "@/components/NavigationControls";
 import ProgressIndicator from "@/components/ProgressIndicator";
 import StatsCard from "@/components/StatsCard";
 import StatsSlide from "@/components/StatsSlide";
+import ThemeSelector from "@/components/ThemeSelector";
 import { Button } from "@/components/ui/button";
 import { 
   defaultData, 
@@ -16,15 +15,31 @@ import {
   getBackgroundImage,
   type PresentationData 
 } from "@/lib/dataUtils";
+import { themes, getFontImports, type Theme } from "@/lib/themes";
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [presentationData, setPresentationData] = useState<PresentationData>(defaultData);
+  const [currentTheme, setCurrentTheme] = useState<Theme>(themes[0]);
 
   // Total slides = intro + data slides + finale
   const totalSlides = presentationData.slides.length + 2;
+
+  // Load theme fonts dynamically
+  useEffect(() => {
+    const fontLink = document.getElementById("theme-fonts") as HTMLLinkElement;
+    if (fontLink) {
+      fontLink.href = getFontImports(currentTheme);
+    } else {
+      const link = document.createElement("link");
+      link.id = "theme-fonts";
+      link.rel = "stylesheet";
+      link.href = getFontImports(currentTheme);
+      document.head.appendChild(link);
+    }
+  }, [currentTheme]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -68,21 +83,28 @@ export default function Home() {
     // Intro slide
     if (index === 0) {
       return (
-        <StatsSlide key="intro" backgroundGradient="from-purple-900 via-pink-800 to-cyan-900">
+        <StatsSlide key="intro" backgroundGradient={currentTheme.gradients.intro}>
           <div className="flex flex-col items-center justify-center min-h-[80vh] text-center space-y-8">
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 150, damping: 15 }}
               className="text-8xl"
+              style={{ color: currentTheme.colors.accent }}
             >
-              <Sparkles className="w-32 h-32 text-yellow-400 mx-auto" />
+              <Sparkles className="w-32 h-32 mx-auto" />
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="font-display text-6xl md:text-8xl text-holographic drop-shadow-2xl"
+              className={`text-6xl md:text-8xl drop-shadow-2xl ${
+                currentTheme.id === "vaporwave" ? "text-holographic" : ""
+              }`}
+              style={{
+                fontFamily: currentTheme.fonts.display,
+                color: currentTheme.id === "vaporwave" ? undefined : currentTheme.colors.primary,
+              }}
             >
               {presentationData.title}
             </motion.h1>
@@ -90,7 +112,11 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="font-stats text-3xl md:text-5xl text-white/90 drop-shadow-lg"
+              className="text-3xl md:text-5xl drop-shadow-lg"
+              style={{
+                fontFamily: currentTheme.fonts.stats,
+                color: currentTheme.colors.text,
+              }}
             >
               {presentationData.subtitle}
             </motion.p>
@@ -98,23 +124,18 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.7 }}
-              className="flex gap-4"
             >
               <Button
                 onClick={handleNext}
                 size="lg"
-                className="px-12 py-6 text-xl font-display bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 hover:scale-110 transition-transform"
+                className="px-12 py-6 text-xl hover:scale-110 transition-transform"
+                style={{
+                  fontFamily: currentTheme.fonts.display,
+                  background: `linear-gradient(to right, ${currentTheme.colors.primary}, ${currentTheme.colors.secondary})`,
+                  color: currentTheme.id === "minimal" || currentTheme.id === "brutalist" ? "#FFFFFF" : currentTheme.colors.text,
+                }}
               >
                 Let's Go! ✨
-              </Button>
-              <Button
-                onClick={() => setShowUpload(true)}
-                size="lg"
-                variant="outline"
-                className="px-8 py-6 text-xl font-display border-2 border-white text-white hover:bg-white hover:text-purple-900"
-              >
-                <Upload className="w-5 h-5 mr-2" />
-                Upload Data
               </Button>
             </motion.div>
           </div>
@@ -125,21 +146,28 @@ export default function Home() {
     // Finale slide
     if (index === totalSlides - 1) {
       return (
-        <StatsSlide key="finale" backgroundGradient="from-pink-900 via-purple-900 to-indigo-900">
+        <StatsSlide key="finale" backgroundGradient={currentTheme.gradients.finale}>
           <div className="flex flex-col items-center justify-center min-h-[80vh] text-center space-y-8">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 100, damping: 15 }}
               className="text-8xl"
+              style={{ color: currentTheme.colors.accent }}
             >
-              <Award className="w-32 h-32 text-yellow-400 mx-auto" />
+              <Award className="w-32 h-32 mx-auto" />
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="font-display text-6xl md:text-8xl text-holographic drop-shadow-2xl"
+              className={`text-6xl md:text-8xl drop-shadow-2xl ${
+                currentTheme.id === "vaporwave" ? "text-holographic" : ""
+              }`}
+              style={{
+                fontFamily: currentTheme.fonts.display,
+                color: currentTheme.id === "vaporwave" ? undefined : currentTheme.colors.primary,
+              }}
             >
               You're Incredible!
             </motion.h1>
@@ -147,9 +175,13 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="font-body text-2xl md:text-4xl text-white/90 drop-shadow-lg max-w-3xl"
+              className="text-2xl md:text-4xl drop-shadow-lg max-w-3xl"
+              style={{
+                fontFamily: currentTheme.fonts.body,
+                color: currentTheme.colors.text,
+              }}
             >
-              Thanks for an amazing year of music
+              Thanks for an amazing year!
             </motion.p>
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -161,24 +193,14 @@ export default function Home() {
                 onClick={() => setCurrentSlide(0)}
                 size="lg"
                 variant="outline"
-                className="px-8 py-6 text-lg font-display border-2 border-white text-white hover:bg-white hover:text-purple-900"
+                className="px-8 py-6 text-lg border-2 hover:scale-105 transition-transform"
+                style={{
+                  fontFamily: currentTheme.fonts.display,
+                  borderColor: currentTheme.colors.primary,
+                  color: currentTheme.colors.primary,
+                }}
               >
                 Replay
-              </Button>
-              <Button
-                onClick={() => setShowUpload(true)}
-                size="lg"
-                variant="outline"
-                className="px-8 py-6 text-lg font-display border-2 border-white text-white hover:bg-white hover:text-purple-900"
-              >
-                <Upload className="w-5 h-5 mr-2" />
-                New Data
-              </Button>
-              <Button
-                size="lg"
-                className="px-8 py-6 text-lg font-display bg-gradient-to-r from-pink-500 to-purple-500 hover:scale-110 transition-transform"
-              >
-                Share Your Stats 🎉
               </Button>
             </motion.div>
           </div>
@@ -199,8 +221,10 @@ export default function Home() {
               title={slideData.title}
               value={slideData.value}
               subtitle={slideData.subtitle}
-              icon={createElement(IconComponent, { className: "w-16 h-16 text-cyan-400" })}
+              icon={createElement(IconComponent, { className: "w-16 h-16" })}
+              backgroundImage={backgroundImage}
               delay={0.2}
+              theme={currentTheme}
             />
           </div>
         </div>
@@ -229,6 +253,9 @@ export default function Home() {
 
       <ConfettiEffect trigger={showConfetti} />
 
+      {/* Theme Selector */}
+      <ThemeSelector currentTheme={currentTheme} onThemeChange={setCurrentTheme} />
+
       {/* Upload Modal */}
       <AnimatePresence>
         {showUpload && (
@@ -239,7 +266,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Floating Upload Button */}
+      {/* Floating Upload Button (bottom right) */}
       <motion.button
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}

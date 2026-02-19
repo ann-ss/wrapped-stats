@@ -6,6 +6,7 @@ import DataUpload from "@/components/DataUpload";
 import NavigationControls from "@/components/NavigationControls";
 import PhotoUpload from "@/components/PhotoUpload";
 import ProgressIndicator from "@/components/ProgressIndicator";
+import ShareButton from "@/components/ShareButton";
 import StatsCard from "@/components/StatsCard";
 import StatsSlide from "@/components/StatsSlide";
 import ThemeSelector from "@/components/ThemeSelector";
@@ -35,6 +36,7 @@ import {
   addUploadedPhoto,
   removeUploadedPhoto,
 } from "@/lib/storage";
+import { decodeDataFromUrl } from "@/lib/urlSharing";
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -46,8 +48,31 @@ export default function Home() {
   const [customThemes, setCustomThemes] = useState<Theme[]>([]);
   const [uploadedPhotos, setUploadedPhotos] = useState<Record<string, string>>({});
 
-  // Load data from local storage on mount
+  // Load data from URL or local storage on mount
   useEffect(() => {
+    // Check for shared data in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedData = urlParams.get('share');
+    
+    if (sharedData) {
+      const decoded = decodeDataFromUrl(sharedData);
+      if (decoded) {
+        setPresentationData(decoded.data);
+        
+        // Load shared theme if specified
+        if (decoded.themeId) {
+          const sharedTheme = themes.find(t => t.id === decoded.themeId);
+          if (sharedTheme) {
+            setCurrentTheme(sharedTheme);
+          }
+        }
+        
+        // Don't save shared data to local storage automatically
+        return;
+      }
+    }
+    
+    // Load from local storage if no shared data
     const savedData = loadPresentationData();
     if (savedData) {
       setPresentationData(savedData);
@@ -470,6 +495,9 @@ export default function Home() {
       >
         <ImageIcon className="w-6 h-6" />
       </motion.button>
+
+      {/* Share Button */}
+      <ShareButton data={presentationData} theme={currentTheme} />
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ReactNode, useState } from "react";
 import type { Theme } from "@/lib/themes";
 
 interface StatsCardProps {
@@ -21,6 +21,8 @@ export default function StatsCard({
   delay = 0,
   theme,
 }: StatsCardProps) {
+  const [revealed, setRevealed] = useState(false);
+
   const getAnimationConfig = () => {
     switch (theme.animation.type) {
       case "spring":
@@ -44,6 +46,14 @@ export default function StatsCard({
         };
     }
   };
+
+  const isVaporwave = theme.id === "vaporwave";
+  const textColor = backgroundImage ? "#FFFFFF" : theme.colors.text;
+  const primaryColor = backgroundImage
+    ? isVaporwave
+      ? undefined
+      : "#FFFFFF"
+    : theme.colors.primary;
 
   return (
     <motion.div
@@ -95,12 +105,13 @@ export default function StatsCard({
           className="text-2xl md:text-3xl drop-shadow-lg"
           style={{
             fontFamily: theme.fonts.body,
-            color: backgroundImage ? "#FFFFFF" : theme.colors.text,
+            color: textColor,
           }}
         >
           {title}
         </motion.h3>
 
+        {/* Tap-to-reveal stat value */}
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -108,19 +119,63 @@ export default function StatsCard({
             ...getAnimationConfig(),
             delay: delay + 0.4,
           }}
-          className={`text-6xl md:text-8xl font-bold drop-shadow-2xl ${
-            backgroundImage && theme.id === "vaporwave" ? "text-holographic" : ""
-          }`}
-          style={{
-            fontFamily: theme.fonts.stats,
-            color: backgroundImage
-              ? theme.id === "vaporwave"
-                ? undefined
-                : "#FFFFFF"
-              : theme.colors.primary,
+          className="relative cursor-pointer select-none"
+          onClick={(e) => {
+            e.stopPropagation();
+            setRevealed(true);
           }}
+          title={revealed ? undefined : "Tap to reveal"}
         >
-          {value}
+          <AnimatePresence mode="wait">
+            {!revealed ? (
+              /* Blurred / masked placeholder */
+              <motion.div
+                key="hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, scale: 1.1 }}
+                transition={{ duration: 0.25 }}
+                className="flex flex-col items-center gap-2"
+              >
+                <div
+                  className={`text-6xl md:text-8xl font-bold drop-shadow-2xl blur-md pointer-events-none ${
+                    backgroundImage && isVaporwave ? "text-holographic" : ""
+                  }`}
+                  style={{
+                    fontFamily: theme.fonts.stats,
+                    color: primaryColor,
+                  }}
+                >
+                  {value}
+                </div>
+                <motion.span
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-sm md:text-base font-medium tracking-widest uppercase"
+                  style={{ color: backgroundImage ? "rgba(255,255,255,0.7)" : theme.colors.secondary }}
+                >
+                  Tap to reveal
+                </motion.span>
+              </motion.div>
+            ) : (
+              /* Revealed value with pop animation */
+              <motion.div
+                key="revealed"
+                initial={{ opacity: 0, scale: 0.4, rotateY: 90 }}
+                animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+                transition={{ type: "spring", stiffness: 260, damping: 18 }}
+                className={`text-6xl md:text-8xl font-bold drop-shadow-2xl ${
+                  backgroundImage && isVaporwave ? "text-holographic" : ""
+                }`}
+                style={{
+                  fontFamily: theme.fonts.stats,
+                  color: primaryColor,
+                }}
+              >
+                {value}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {subtitle && (
@@ -140,7 +195,7 @@ export default function StatsCard({
       </div>
 
       {/* Decorative floating shapes - only for vaporwave theme */}
-      {theme.id === "vaporwave" && (
+      {isVaporwave && (
         <>
           <motion.div
             animate={{

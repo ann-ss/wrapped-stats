@@ -174,6 +174,35 @@ export const themes: Theme[] = [
       duration: 0.2,
     },
   },
+  {
+    id: "nautical",
+    name: "Nautical Voyage",
+    description: "Deep seas, brass instruments, and maritime adventure",
+    colors: {
+      primary: "#F4C842",
+      secondary: "#A8D8EA",
+      accent: "#E8F4F8",
+      text: "#E8F4F8",
+    },
+    fonts: {
+      display: "Cinzel",
+      stats: "Josefin Sans",
+      body: "Lato",
+    },
+    gradients: {
+      intro: "from-slate-900 via-blue-950 to-teal-950",
+      finale: "from-teal-950 via-blue-950 to-slate-900",
+    },
+    cardStyle: {
+      background: "bg-blue-950/70 backdrop-blur-md",
+      blur: "backdrop-blur-md",
+      border: "border-2 border-yellow-400/50 shadow-[0_0_30px_rgba(244,200,66,0.15)]",
+    },
+    animation: {
+      type: "smooth",
+      duration: 0.6,
+    },
+  },
 ];
 
 export const getTheme = (themeId: string): Theme => {

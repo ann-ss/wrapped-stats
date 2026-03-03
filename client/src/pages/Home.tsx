@@ -199,7 +199,7 @@ export default function Home() {
     // Intro slide
     if (index === 0) {
       return (
-        <StatsSlide key="intro" backgroundGradient={currentTheme.gradients.intro}>
+        <StatsSlide key="intro" backgroundGradient={currentTheme.gradients.intro} theme={currentTheme}>
           <div className="flex flex-col items-center justify-center min-h-[80vh] text-center space-y-8">
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
@@ -265,7 +265,7 @@ export default function Home() {
     // Finale slide
     if (index === totalSlides - 1) {
       return (
-        <StatsSlide key="finale" backgroundGradient={currentTheme.gradients.finale}>
+        <StatsSlide key="finale" backgroundGradient={currentTheme.gradients.finale} theme={currentTheme}>
           <div className="flex flex-col items-center justify-center min-h-[80vh] text-center space-y-8">
             <motion.div
               initial={{ scale: 0 }}
@@ -334,17 +334,26 @@ export default function Home() {
     if (slideData.type === "stat") {
       const statSlide = slideData as StatSlide;
       const IconComponent = getIconComponent(statSlide.icon);
+      // Custom user photo always takes priority.
+      // Built-in background images are only used for the vaporwave theme;
+      // all other themes use their own gradient so the slide feels cohesive.
       const backgroundImage = statSlide.customPhoto
         ? uploadedPhotos[statSlide.customPhoto]
-        : statSlide.backgroundIndex !== undefined
+        : currentTheme.id === "vaporwave" && statSlide.backgroundIndex !== undefined
         ? getBackgroundImage(statSlide.backgroundIndex)
         : undefined;
 
       return (
-        <StatsSlide key={`stat-${index}`} backgroundImage={backgroundImage}>
+        <StatsSlide
+          key={`stat-${index}`}
+          backgroundImage={backgroundImage}
+          backgroundGradient={currentTheme.gradients.intro}
+          theme={currentTheme}
+        >
           <div className="flex items-center justify-center min-h-[80vh]">
             <div className="max-w-2xl w-full">
               <StatsCard
+                key={`card-${index}`}
                 title={statSlide.title}
                 value={statSlide.value}
                 subtitle={statSlide.subtitle}
@@ -362,7 +371,7 @@ export default function Home() {
     // Top ranking slide
     if (slideData.type === "top-ranking") {
       return (
-        <StatsSlide key={`ranking-${index}`} backgroundGradient={currentTheme.gradients.intro}>
+        <StatsSlide key={`ranking-${index}`} backgroundGradient={currentTheme.gradients.intro} theme={currentTheme}>
           <TopRankingSlide data={slideData as TopRankingSlideData} theme={currentTheme} />
         </StatsSlide>
       );
@@ -371,7 +380,7 @@ export default function Home() {
     // Timeline slide
     if (slideData.type === "timeline") {
       return (
-        <StatsSlide key={`timeline-${index}`} backgroundGradient={currentTheme.gradients.intro}>
+        <StatsSlide key={`timeline-${index}`} backgroundGradient={currentTheme.gradients.intro} theme={currentTheme}>
           <TimelineSlideComponent data={slideData as TimelineSlide} theme={currentTheme} />
         </StatsSlide>
       );
@@ -380,7 +389,7 @@ export default function Home() {
     // Photo carousel slide
     if (slideData.type === "photo-carousel") {
       return (
-        <StatsSlide key={`carousel-${index}`} backgroundGradient={currentTheme.gradients.intro}>
+        <StatsSlide key={`carousel-${index}`} backgroundGradient={currentTheme.gradients.intro} theme={currentTheme}>
           <PhotoCarouselSlideComponent
             data={slideData as PhotoCarouselSlide}
             theme={currentTheme}

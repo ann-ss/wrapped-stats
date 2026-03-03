@@ -138,7 +138,7 @@ export default function StatsCard({
                 className="flex flex-col items-center gap-2"
               >
                 <div
-                  className={`text-6xl md:text-8xl font-bold drop-shadow-2xl blur-md pointer-events-none ${
+                  className={`text-6xl md:text-8xl font-bold drop-shadow-2xl blur-3xl pointer-events-none ${
                     backgroundImage && isVaporwave ? "text-holographic" : ""
                   }`}
                   style={{

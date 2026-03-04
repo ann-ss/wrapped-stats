@@ -8,6 +8,12 @@ import {
   Trophy,
   Star,
   Calendar,
+  PlaneTakeoff,
+  MessageCircle,
+  Phone,
+  Footprints,
+  Utensils,
+  HeartCrack,
   Image as ImageIcon,
 } from "lucide-react";
 
@@ -78,7 +84,13 @@ export const getIconComponent = (iconName: string) => {
     trophy: Trophy,
     star: Star,
     calendar: Calendar,
+    phone: Phone,
+    plane: PlaneTakeoff,
+    message: MessageCircle,
     image: ImageIcon,
+    steps: Footprints,
+    utensils: Utensils,
+    heartbreak: HeartCrack,
   };
 
   return iconMap[iconName] || Sparkles;

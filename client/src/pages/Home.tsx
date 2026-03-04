@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Award, Sparkles, Upload, ImageIcon } from "lucide-react";
+import { Award, Sparkles, Heart, Upload, ImageIcon } from "lucide-react";
 import { useState, useEffect, createElement } from "react";
 import ConfettiEffect from "@/components/ConfettiEffect";
 import DataUpload from "@/components/DataUpload";
@@ -208,7 +208,7 @@ export default function Home() {
               className="text-8xl"
               style={{ color: currentTheme.colors.accent }}
             >
-              <Sparkles className="w-32 h-32 mx-auto" />
+              <Heart className="w-32 h-32 mx-auto" />
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 50 }}
@@ -274,7 +274,7 @@ export default function Home() {
               className="text-8xl"
               style={{ color: currentTheme.colors.accent }}
             >
-              <Award className="w-32 h-32 mx-auto" />
+              <Heart className="w-32 h-32 mx-auto" />
             </motion.div>
             <motion.h1
               initial={{ opacity: 0, y: 50 }}
@@ -288,7 +288,7 @@ export default function Home() {
                 color: currentTheme.id === "vaporwave" ? undefined : currentTheme.colors.primary,
               }}
             >
-              You're Incredible!
+              Thanks for an amazing year! 
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 30 }}
@@ -300,7 +300,7 @@ export default function Home() {
                 color: currentTheme.colors.text,
               }}
             >
-              Thanks for an amazing year!
+              Here's to another (even better) one :)
             </motion.p>
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}

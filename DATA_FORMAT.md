@@ -133,11 +133,17 @@ Display a slideshow of uploaded photos.
 - `sparkles` - Sparkles/stars
 - `trending` - Trending up arrow
 - `heart` - Heart
+- `heartbreak` - Heart with crack
 - `award` - Award medal
 - `trophy` - Trophy
 - `star` - Star
 - `calendar` - Calendar
 - `image` - Image/photo
+- `phone` - Phone
+- `plane` - Plane
+- `message` - Text message icon
+- `steps` - Footprints
+- `utensils` - Fork and Knife
 
 ## Background Images
 

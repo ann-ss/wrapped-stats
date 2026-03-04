@@ -100,7 +100,8 @@ export default function DataUpload({ onDataLoaded, onClose }: DataUploadProps) {
     }
 
     // Validate each slide
-    const validIcons = ["clock", "music", "sparkles", "trending", "heart", "award", "trophy", "star", "calendar", "image"];
+    // TODO move validIcons to lib/dataUtils as source of truth
+    const validIcons = ["clock", "music", "sparkles", "trending", "heart", "award", "trophy", "star", "calendar", "image", "plane", "message", "heartbreak", "steps", "utensils", "phone"];
     
     for (const slide of data.slides) {
       if (!slide.type) return false;
@@ -108,7 +109,9 @@ export default function DataUpload({ onDataLoaded, onClose }: DataUploadProps) {
       // Validate based on slide type
       if (slide.type === "stat") {
         if (!slide.title || slide.value === undefined) return false;
-        if (!slide.icon || !validIcons.includes(slide.icon)) return false;
+        if (!slide.icon || !validIcons.includes(slide.icon)) {
+          toast.error("Invalid slide icon ${slide.icon}, replacing with sparkles");
+        }
         // backgroundIndex and customPhoto are optional
       } else if (slide.type === "top-ranking") {
         if (!slide.title || !Array.isArray(slide.items)) return false;
@@ -133,7 +136,7 @@ export default function DataUpload({ onDataLoaded, onClose }: DataUploadProps) {
   const downloadExample = () => {
     const exampleData = {
       title: "Your Year in Stats",
-      subtitle: "2024 Wrapped",
+      subtitle: "2025 Wrapped",
       slides: [
         {
           type: "stat",

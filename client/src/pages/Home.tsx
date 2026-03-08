@@ -331,7 +331,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.7 }}
-              className="flex gap-4 mt-8"
+              className="flex flex-col items-center gap-4 mt-8"
             >
               <Button
                 onClick={() => setCurrentSlide(0)}
@@ -346,9 +346,8 @@ export default function Home() {
               >
                 Replay
               </Button>
+              <ShareButton data={presentationData} theme={currentTheme} />
             </motion.div>
-          {/* Share Button */}
-          <ShareButton data={presentationData} theme={currentTheme} />
           </div>
         </StatsSlide>
       );

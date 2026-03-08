@@ -36,19 +36,21 @@ export default function ShareButton({ data, theme }: ShareButtonProps) {
 
   return (
     <>
-      {/* Share Button */}
-      <motion.button
+      {/* Inline rectangular Share button — rendered by the parent wherever it places this component */}
+      <Button
         onClick={handleShare}
-        className="fixed bottom-24 right-4 md:right-8 z-50 p-4 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-2xl hover:shadow-pink-500/50"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 20 }}
-        title="Share presentation"
+        size="lg"
+        className="px-8 py-6 text-lg hover:scale-105 transition-transform flex items-center gap-2"
+        style={{
+          fontFamily: theme.fonts.display,
+          background: theme.colors.accent,
+          color: "#fff",
+          border: "none",
+        }}
       >
-        <Share2 className="w-6 h-6" />
-      </motion.button>
+        <Share2 className="w-5 h-5" />
+        Share
+      </Button>
 
       {/* Share Modal */}
       <AnimatePresence>
@@ -70,7 +72,10 @@ export default function ShareButton({ data, theme }: ShareButtonProps) {
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl">
+                  <div
+                    className="p-3 rounded-2xl"
+                    style={{ background: theme.colors.accent }}
+                  >
                     <Share2 className="w-6 h-6 text-white" />
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -123,7 +128,7 @@ export default function ShareButton({ data, theme }: ShareButtonProps) {
               {/* Info */}
               <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4">
                 <p className="text-sm text-blue-800 dark:text-blue-300">
-                  💡 <strong>Tip:</strong> Anyone with this link can view your presentation. 
+                  💡 <strong>Tip:</strong> Anyone with this link can view your presentation.
                   The data is encoded in the URL, so no server storage is needed.
                 </p>
               </div>

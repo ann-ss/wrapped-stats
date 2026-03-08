@@ -457,13 +457,13 @@ export default function Home() {
       <ConfettiEffect trigger={showConfetti} />
 
       {/* Theme Selector */}
-      <ThemeSelector
+      {currentSlide == 0 && <ThemeSelector
         currentTheme={currentTheme}
         customThemes={customThemes}
         onThemeChange={handleThemeChange}
         onCustomThemeAdd={handleCustomThemeAdd}
         onCustomThemeDelete={handleCustomThemeDelete}
-      />
+      />}
 
       {/* Data Upload Modal */}
       <AnimatePresence>
@@ -485,7 +485,7 @@ export default function Home() {
       </AnimatePresence>
 
       {/* Floating Upload Button (bottom right) */}
-      <motion.button
+      {currentSlide == 0 && <motion.button
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 1 }}
@@ -494,10 +494,10 @@ export default function Home() {
         title="Upload your data"
       >
         <Upload className="w-6 h-6" />
-      </motion.button>
+      </motion.button>}
 
       {/* Floating Photo Button (bottom right, above upload) */}
-      <motion.button
+      {currentSlide == 0 && <motion.button
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 1.1 }}
@@ -506,7 +506,7 @@ export default function Home() {
         title="Manage photos"
       >
         <ImageIcon className="w-6 h-6" />
-      </motion.button>
+      </motion.button>}
 
     </div>
   );

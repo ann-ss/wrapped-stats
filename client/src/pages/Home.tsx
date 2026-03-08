@@ -347,6 +347,8 @@ export default function Home() {
                 Replay
               </Button>
             </motion.div>
+          {/* Share Button */}
+          <ShareButton data={presentationData} theme={currentTheme} />
           </div>
         </StatsSlide>
       );
@@ -506,9 +508,6 @@ export default function Home() {
       >
         <ImageIcon className="w-6 h-6" />
       </motion.button>
-
-      {/* Share Button */}
-      <ShareButton data={presentationData} theme={currentTheme} />
 
     </div>
   );
